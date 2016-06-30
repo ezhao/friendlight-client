@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {
 		AppRegistry,
+		ScrollView,
 		Image,
 		TouchableHighlight,
 		StyleSheet,
@@ -8,6 +9,7 @@ import {
 		ListView,
 		View
 } from 'react-native';
+var FriendListItem = require('./FriendListItem');
 
 var REQUEST_URL = 'https://friendlight.herokuapp.com/api/friends';
 
@@ -47,19 +49,19 @@ class FriendList extends Component {
 		}
 
 		return (
-				<View style={styles.allContainer}>
+				<ScrollView>
 					<ListView
 							dataSource={this.state.dataSource}
 							renderRow={this.renderFriend}
-							style={styles.listView}/>
+							style={styles.friendListView}/>
 					<AddFriendButton onSelect={this.goToAddFriend} />
-				</View>
+				</ScrollView>
 		);
 	}
 
 	renderLoadingView() {
 		return (
-				<View style={styles.container}>
+				<View style={styles.loadingContainer}>
 					<Text>Loading friends...</Text>
 				</View>
 		);
@@ -67,11 +69,9 @@ class FriendList extends Component {
 
 	renderFriend = (friend) => {
 		return (
-				<TouchableHighlight onPress={() => this.selectFriend(friend)}>
-					<View style={styles.container}>
-						<Text style={styles.name}>{friend.name}</Text>
-					</View>
-				</TouchableHighlight>
+				<FriendListItem
+						onSelect={this.selectFriend}
+						friend={friend} />
 		);
 	};
 
@@ -104,25 +104,20 @@ class AddFriendButton extends Component {
 }
 
 const styles = StyleSheet.create({
-	container: {
+	loadingContainer: {
+		marginTop: 64,
 		flex: 1,
-		flexDirection: 'row',
-		justifyContent: 'center',
-		alignItems: 'center',
-		backgroundColor: '#F5FCFF'
+		flexDirection: 'row'
 	},
-	name: {
-		fontSize: 20,
-		marginBottom: 8,
-		textAlign: 'center'
-	},
-	listView: {
-		paddingTop: 60,
-		backgroundColor: '#F5FCFF'
+	friendListView: {
+		marginTop: 64,
+		backgroundColor: '#FFF',
+		borderTopWidth: 1,
+		borderColor: '#EEE'
 	},
 	plusImage: {
-		width: 64,
-		height: 64
+		width: 32,
+		height: 32
 	}
 });
 

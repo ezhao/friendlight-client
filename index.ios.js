@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {
 		Navigator,
+		View,
 		AppRegistry,
 		StyleSheet,
 		TouchableOpacity,
@@ -55,7 +56,9 @@ class Index extends Component {
 			},
 			titleContentForRoute: function(route, navigator) {
 				return (
-						<Text>{route.name}</Text>
+						<View style={styles.navNameContainer}>
+							<Text>{route.name}</Text>
+						</View>
 				);
 			},
 			iconForRoute: function(route, navigator) {
@@ -82,6 +85,10 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		backgroundColor: '#F5FCFF'
+	},
+	navNameContainer: {
+		flex: 1,
+		height: 64
 	},
 	crumbIconPlaceholder: {
 		flex: 1,
