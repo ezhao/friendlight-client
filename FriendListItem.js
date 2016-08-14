@@ -21,21 +21,23 @@ class FriendListItem extends Component {
 
 		this.state = {
 			_animatedLeft: new Animated.Value(0),
-			color: '#FFF'
+			color: '#CCC'
 		};
 	}
 
 	render() {
-		var onSelect = this.props.onSelect;
 		var friend = this.props.friend;
 
 		var dynamicStyle = {
-			transform: [{translateX: this.state._animatedLeft}],
-			backgroundColor: this.state.color
+			transform: [{translateX: this.state._animatedLeft}]
 		};
 
+		var dynamicBackgroundStyle = {
+			backgroundColor: this.state.color
+		}
+
 		return (
-				<TouchableHighlight onPress={() => onSelect(friend)}>
+				<TouchableHighlight style={dynamicBackgroundStyle}>
 					<Animated.View
 							style={[styles.friendContainer, dynamicStyle]}
 							{...this._panResponder.panHandlers}>
@@ -49,26 +51,34 @@ class FriendListItem extends Component {
 		this._panResponder = PanResponder.create({
 			onStartShouldSetPanResponder: (evt, gestureState) => true,
 			onMoveShouldSetPanResponder: (evt, gestureState) => true,
-			onPanResponderGrant: this._handlePanResponderGrant,
 			onPanResponderMove: this._handlePanResponderMove,
 			onPanResponderRelease: this._handlePanResponderEnd,
 			onPanResponderTerminate: this._handlePanResponderEnd
 		});
 	}
 
-	_handlePanResponderGrant = (e: Object, gestureState: Object) => {
-		this.setState({color: 'blue'});
-	};
-
 	_handlePanResponderMove = (e: Object, gestureState: Object) => {
 		this.state._animatedLeft.setValue(gestureState.dx);
+		if (Math.abs(gestureState.dx) >= 100) {
+			this.setState({color: 'blue'});
+		} else {
+			this.setState({color: '#CCC'});
+		}
 	};
 
 	_handlePanResponderEnd = (e: Object, gestureState: Object) => {
-		Animated.spring(this.state._animatedLeft, {
-				toValue: 0
-			}).start();
-		this.setState({color: '#FFF'});
+		if (Math.abs(gestureState.dx) < 20) {
+			this.state._animatedLeft.setValue(0);
+
+			var onSelect = this.props.onSelect;
+			var friend = this.props.friend;
+			onSelect(friend);
+		} else {
+			Animated.spring(this.state._animatedLeft, {
+					toValue: 0
+				}).start();
+		}
+		this.setState({color: '#CCC'});
 	};
 }
 
@@ -82,6 +92,7 @@ var styles = StyleSheet.create({
 		paddingRight: 12,
 		borderBottomWidth: 1,
 		borderColor: '#EEE',
+		backgroundColor: "#FFF"
 	},
 	name: {
 		fontSize: 14
