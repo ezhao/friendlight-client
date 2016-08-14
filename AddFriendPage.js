@@ -9,9 +9,9 @@ import {
 		ListView,
 		View
 } from 'react-native';
+import { REQUEST_URL } from './Constants';
 
 var FRIEND_LIST_INDEX = 0;
-var REQUEST_URL = 'https://friendlight.herokuapp.com/api/friends';
 
 class AddFriendPage extends Component {
 	constructor(props) {
@@ -54,8 +54,10 @@ class AddFriendPage extends Component {
 		fetch(REQUEST_URL, options)
 				.then((responseBody) => responseBody.json())
 				.then((response) => {
-					//this.props.navigator.pop();
-					this.props.navigator.push({name: 'Friend List', index: FRIEND_LIST_INDEX}); // TODO emily use pop when we figure out how to refresh
+					if (this.props.friendListCallback) {
+						this.props.friendListCallback();
+					}
+					this.props.navigator.pop();
 				})
 				.catch((error) => {
 					console.log(error);

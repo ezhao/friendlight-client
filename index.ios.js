@@ -39,7 +39,7 @@ class Index extends Component {
 				)
 			case ADD_FRIEND_INDEX:
 				return (
-						<AddFriendPage navigator={navigator} />
+						<AddFriendPage navigator={navigator} friendListCallback={route.passProps.friendListCallback} />
 				)
 			case FRIEND_LIST_INDEX:
 			default:

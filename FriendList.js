@@ -9,9 +9,8 @@ import {
 		ListView,
 		View
 } from 'react-native';
-var FriendListItem = require('./FriendListItem');
-
-var REQUEST_URL = 'https://friendlight.herokuapp.com/api/friends';
+import FriendListItem from './FriendListItem';
+import { REQUEST_URL } from './Constants';
 
 var FRIEND_PAGE_INDEX = 1; // TODO emily learn js and make this a public static var shared across files SIGH
 var ADD_FRIEND_INDEX = 2;
@@ -94,9 +93,14 @@ class FriendList extends Component {
 	goToAddFriend = () => {
 		this.props.navigator.push({
 			name: "Add Friend",
-			index: ADD_FRIEND_INDEX
+			index: ADD_FRIEND_INDEX,
+			passProps: {friendListCallback: this.updateList}
 		});
 	};
+
+	updateList = () => {
+		this.fetchData();
+	}
 }
 
 class AddFriendButton extends Component {
