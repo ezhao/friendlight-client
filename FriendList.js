@@ -49,11 +49,13 @@ class FriendList extends Component {
 		}
 
 		return (
-				<ScrollView>
+				<ScrollView
+					ref={(component) => this._scrollView = component}>
 					<ListView
-							dataSource={this.state.dataSource}
-							renderRow={this.renderFriend}
-							style={styles.friendListView}/>
+						ref={(component) => this._listView = component}
+						dataSource={this.state.dataSource}
+						renderRow={this.renderFriend}
+						style={styles.friendListView}/>
 					<AddFriendButton onSelect={this.goToAddFriend} />
 				</ScrollView>
 		);
@@ -71,6 +73,7 @@ class FriendList extends Component {
 		return (
 				<FriendListItem
 						onSelect={this.selectFriend}
+						setParentScrollState={this.setScrollState}
 						friend={friend} />
 		);
 	};
@@ -81,6 +84,11 @@ class FriendList extends Component {
 			index: FRIEND_PAGE_INDEX,
 			passProps: {friend: friend}
 		});
+	};
+
+	setScrollState = (scrollState) => {
+		this._scrollView.setNativeProps({scrollEnabled: scrollState});
+		this._listView.setNativeProps({scrollEnabled: scrollState});
 	};
 
 	goToAddFriend = () => {

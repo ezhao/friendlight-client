@@ -12,7 +12,8 @@ import {
 class FriendListItem extends Component {
 	static propTypes = { // todo emily not sure if this is doing anything at all
 		friend: React.PropTypes.object.isRequired,
-		onSelect: React.PropTypes.func.isRequired
+		onSelect: React.PropTypes.func.isRequired,
+		setParentScrollState: React.PropTypes.func,
 	};
 
 	constructor(props) {
@@ -51,35 +52,63 @@ class FriendListItem extends Component {
 		this._panResponder = PanResponder.create({
 			onStartShouldSetPanResponder: (evt, gestureState) => true,
 			onMoveShouldSetPanResponder: (evt, gestureState) => true,
+			onPanResponderGrant: this._handlePanResponderGrant,
 			onPanResponderMove: this._handlePanResponderMove,
-			onPanResponderRelease: this._handlePanResponderEnd,
-			onPanResponderTerminate: this._handlePanResponderEnd
+			onPanResponderRelease: this._handlePanResponderRelease,
+			onPanResponderTerminate: this._handlePanResponderTerminate
 		});
 	}
 
+	_handlePanResponderGrant = (e: Object, gestureState: Object) => {
+
+	};
+
 	_handlePanResponderMove = (e: Object, gestureState: Object) => {
+		var xMagnitude = Math.abs(gestureState.dx);
+		var yMagnitude = Math.abs(gestureState.dy);
+
 		this.state._animatedLeft.setValue(gestureState.dx);
-		if (Math.abs(gestureState.dx) >= 100) {
+		if (xMagnitude >= 100) {
 			this.setState({color: 'blue'});
 		} else {
 			this.setState({color: '#CCC'});
 		}
+
+		var setParentScrollState = this.props.setParentScrollState;
+		if (setParentScrollState) {
+			var verticallyScrolling = yMagnitude >= 1 && yMagnitude > xMagnitude;
+			setParentScrollState(verticallyScrolling);
+		}
 	};
 
-	_handlePanResponderEnd = (e: Object, gestureState: Object) => {
+	_handlePanResponderRelease = (e: Object, gestureState: Object) => {
 		if (Math.abs(gestureState.dx) < 20) {
 			this.state._animatedLeft.setValue(0);
 
 			var onSelect = this.props.onSelect;
 			var friend = this.props.friend;
-			onSelect(friend);
+			//onSelect(friend);
 		} else {
 			Animated.spring(this.state._animatedLeft, {
 					toValue: 0
 				}).start();
 		}
 		this.setState({color: '#CCC'});
+
+		var setParentScrollState = this.props.setParentScrollState;
+		if (setParentScrollState) {
+			setParentScrollState(true);
+		}
 	};
+
+	_handlePanResponderTerminate = (e: Object, gestureState: Object) => {
+		// honestly shouldn't happen with the scrollState stuff but you never know
+		Animated.spring(this.state._animatedLeft, {
+				toValue: 0
+			}).start();
+		this.setState({color: '#CCC'});
+	};
+
 }
 
 var styles = StyleSheet.create({
