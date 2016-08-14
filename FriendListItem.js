@@ -4,7 +4,9 @@ import {
 		TouchableHighlight,
 		View,
 		PanResponder,
-		Text
+		Text,
+		Animated,
+		Dimensions
 } from 'react-native';
 
 class FriendListItem extends Component {
@@ -16,9 +18,9 @@ class FriendListItem extends Component {
 	constructor(props) {
 		super(props);
 		this._panResponder = {};
+
 		this.state = {
-			_previousLeft: 0,
-			left: 0,
+			_animatedLeft: new Animated.Value(0),
 			color: '#FFF'
 		};
 	}
@@ -28,25 +30,25 @@ class FriendListItem extends Component {
 		var friend = this.props.friend;
 
 		var dynamicStyle = {
-			left: this.state.left,
+			transform: [{translateX: this.state._animatedLeft}],
 			backgroundColor: this.state.color
 		};
 
 		return (
 				<TouchableHighlight onPress={() => onSelect(friend)}>
-					<View
+					<Animated.View
 							style={[styles.friendContainer, dynamicStyle]}
 							{...this._panResponder.panHandlers}>
 						<Text style={styles.name}>{friend.name}</Text>
-					</View>
+					</Animated.View>
 				</TouchableHighlight>
 		)
 	}
 
 	componentWillMount() {
 		this._panResponder = PanResponder.create({
-			onStartShouldSetPanResponder: this._handleStartShouldSetPanResponder,
-			onMoveShouldSetPanResponder: this._handleMoveShouldSetPanResponder,
+			onStartShouldSetPanResponder: (evt, gestureState) => true,
+			onMoveShouldSetPanResponder: (evt, gestureState) => true,
 			onPanResponderGrant: this._handlePanResponderGrant,
 			onPanResponderMove: this._handlePanResponderMove,
 			onPanResponderRelease: this._handlePanResponderEnd,
@@ -54,29 +56,19 @@ class FriendListItem extends Component {
 		});
 	}
 
-	_handleStartShouldSetPanResponder(e: Object, gestureState: Object): boolean {
-		// Should we become active when the user presses down on the circle?
-		return true;
-	}
-
-	_handleMoveShouldSetPanResponder(e: Object, gestureState: Object): boolean {
-		// Should we become active when the user moves a touch over the circle?
-		return true;
-	}
-
 	_handlePanResponderGrant = (e: Object, gestureState: Object) => {
 		this.setState({color: 'blue'});
 	};
 
 	_handlePanResponderMove = (e: Object, gestureState: Object) => {
-		this.setState({left: this.state._previousLeft + gestureState.dx});
+		this.state._animatedLeft.setValue(gestureState.dx);
 	};
 
 	_handlePanResponderEnd = (e: Object, gestureState: Object) => {
-		this.setState({
-			color: '#FFF',
-			_previousLeft: this.state._previousLeft + gestureState.dx
-		});
+		Animated.spring(this.state._animatedLeft, {
+				toValue: 0
+			}).start();
+		this.setState({color: '#FFF'});
 	};
 }
 
