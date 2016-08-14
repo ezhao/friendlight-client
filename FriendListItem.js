@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {
 		StyleSheet,
-		TouchableHighlight,
 		View,
 		PanResponder,
 		Text,
@@ -22,7 +21,8 @@ class FriendListItem extends Component {
 
 		this.state = {
 			_animatedLeft: new Animated.Value(0),
-			color: '#CCC'
+			_animatedOpacity: new Animated.Value(1),
+			color: '#CCC',
 		};
 	}
 
@@ -30,7 +30,8 @@ class FriendListItem extends Component {
 		var friend = this.props.friend;
 
 		var dynamicStyle = {
-			transform: [{translateX: this.state._animatedLeft}]
+			transform: [{translateX: this.state._animatedLeft}],
+			opacity: this.state._animatedOpacity,
 		};
 
 		var dynamicBackgroundStyle = {
@@ -38,13 +39,13 @@ class FriendListItem extends Component {
 		}
 
 		return (
-				<TouchableHighlight style={dynamicBackgroundStyle}>
+				<View style={dynamicBackgroundStyle}>
 					<Animated.View
 							style={[styles.friendContainer, dynamicStyle]}
 							{...this._panResponder.panHandlers}>
 						<Text style={styles.name}>{friend.name}</Text>
 					</Animated.View>
-				</TouchableHighlight>
+				</View>
 		)
 	}
 
@@ -87,7 +88,12 @@ class FriendListItem extends Component {
 
 			var onSelect = this.props.onSelect;
 			var friend = this.props.friend;
-			//onSelect(friend);
+			Animated.sequence([
+				Animated.timing(this.state._animatedOpacity, {toValue: 0.5, duration: 25}),
+				Animated.timing(this.state._animatedOpacity, {toValue: 1.0, duration: 50}),
+			]).start();
+
+			onSelect(friend);
 		} else {
 			Animated.spring(this.state._animatedLeft, {
 					toValue: 0
