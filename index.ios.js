@@ -7,13 +7,14 @@ import {
 		TouchableOpacity,
 		Text
 } from 'react-native';
-var FriendList = require('./FriendList');
-var FriendPage = require('./FriendPage');
-var AddFriendPage = require('./AddFriendPage');
-
-var FRIEND_LIST_INDEX = 0;
-var FRIEND_PAGE_INDEX = 1;
-var ADD_FRIEND_INDEX = 2;
+import FriendList from './FriendList';
+import FriendPage from './FriendPage';
+import AddFriendPage from './AddFriendPage';
+import {
+	FRIEND_LIST_INDEX,
+	FRIEND_PAGE_INDEX,
+	ADD_FRIEND_INDEX
+} from './Constants';
 
 class Index extends Component {
 	render() {
@@ -23,7 +24,7 @@ class Index extends Component {
 						initialRoute={{name: 'Friend List', index: FRIEND_LIST_INDEX}}
 						renderScene={this._renderScene}
 						navigationBar={
-		          <Navigator.BreadcrumbNavigationBar
+		          <Navigator.NavigationBar
 		            routeMapper={this._navBarRouteMapper}
 		          />
 		        }
@@ -35,48 +36,46 @@ class Index extends Component {
 		switch (route.index) {
 			case FRIEND_PAGE_INDEX:
 				return (
-						<FriendPage friend={route.passProps.friend}/>
+					<FriendPage friend={route.passProps.friend}/>
 				)
 			case ADD_FRIEND_INDEX:
 				return (
-						<AddFriendPage navigator={navigator} friendListCallback={route.passProps.friendListCallback} />
+					<AddFriendPage
+						navigator={navigator}
+						friendListCallback={route.passProps.friendListCallback}/>
 				)
 			case FRIEND_LIST_INDEX:
 			default:
 				return (
-						<FriendList navigator={navigator} />
+					<FriendList navigator={navigator} />
 				)
 		}
 	}
 
 	componentWillMount = () => {
 		this._navBarRouteMapper = {
-			rightContentForRoute: function(route, navigator) {
-				return null;
-			},
-			titleContentForRoute: function(route, navigator) {
+			Title: function(route, navigator, index, navState) {
 				return (
 						<View style={styles.navNameContainer}>
 							<Text>{route.name}</Text>
 						</View>
 				);
 			},
-			iconForRoute: function(route, navigator) {
+			LeftButton: function(route, navigator, index, navState) {
+				if (index == FRIEND_LIST_INDEX) { //TODO(emily) check stacksize instead
+					return null;
+				}
 				return (
 						<TouchableOpacity
-								onPress={() => { navigator.popToRoute(route); }}
 								style={styles.crumbIconPlaceholder}
-						/>
+								onPress={() => { navigator.pop(); }}>
+							<Text>Back</Text>
+						</TouchableOpacity>
 				);
 			},
-			separatorForRoute: function(route, navigator) {
-				return (
-						<TouchableOpacity
-								onPress={navigator.pop}
-								style={styles.crumbSeparatorPlaceholder}
-						/>
-				);
-			}
+			RightButton: function(route, navigator, index, navState) {
+				return null;
+			},
 		};
 	};
 }
@@ -84,20 +83,19 @@ class Index extends Component {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: '#F5FCFF'
+		backgroundColor: '#FCFCF2',
 	},
 	navNameContainer: {
 		flex: 1,
-		height: 64
+		flexDirection:'row',
+		alignItems: 'center',
 	},
 	crumbIconPlaceholder: {
 		flex: 1,
-		backgroundColor: '#555555'
+		flexDirection:'row',
+		alignItems: 'center',
+		padding: 8,
 	},
-	crumbSeparatorPlaceholder: {
-		flex: 1,
-		backgroundColor: '#aaaaaa',
-	}
 });
 
 AppRegistry.registerComponent('SampleAppMovies', () => Index);

@@ -10,10 +10,11 @@ import {
 		View
 } from 'react-native';
 import FriendListItem from './FriendListItem';
-import { REQUEST_URL } from './Constants';
-
-var FRIEND_PAGE_INDEX = 1; // TODO emily learn js and make this a public static var shared across files SIGH
-var ADD_FRIEND_INDEX = 2;
+import {
+	REQUEST_URL,
+	FRIEND_PAGE_INDEX,
+	ADD_FRIEND_INDEX
+} from './Constants';
 
 class FriendList extends Component {
 	constructor(props) {

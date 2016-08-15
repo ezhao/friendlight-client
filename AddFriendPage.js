@@ -9,9 +9,10 @@ import {
 		ListView,
 		View
 } from 'react-native';
-import { REQUEST_URL } from './Constants';
-
-var FRIEND_LIST_INDEX = 0;
+import {
+	REQUEST_URL,
+	FRIEND_LIST_INDEX
+} from './Constants';
 
 class AddFriendPage extends Component {
 	constructor(props) {
