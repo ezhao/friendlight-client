@@ -71,10 +71,10 @@ class FriendList extends Component {
 
 	renderFriend = (friend) => {
 		return (
-				<FriendListItem
-						onSelect={this.selectFriend}
-						setParentScrollState={this.setScrollState}
-						friend={friend} />
+			<FriendListItem
+				onSelect={this.selectFriend}
+				setParentScrollState={this.setScrollState}
+				friend={friend} />
 		);
 	};
 
