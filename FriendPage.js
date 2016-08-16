@@ -7,7 +7,11 @@ import {
 	View,
 	Animated,
 } from 'react-native';
-import {friendIdRequestUrl} from './Constants';
+import {
+	friendIdRequestUrl,
+	generatePost,
+	INTERACTIONS_REQUEST_URL,
+} from './Constants';
 
 
 class FriendPage extends Component {
@@ -40,7 +44,7 @@ class FriendPage extends Component {
 		}
 
 		// TODO: this is jank for now
-		var savingNoteIndicator = {
+		var savingNoteIndicatorStyle = {
 			opacity: this.state._noteSavingAnimatedOpacity,
 		}
 
@@ -58,9 +62,13 @@ class FriendPage extends Component {
 				<TouchableElement onPress={this.saveNote}>
 					<Text>Save Note</Text>
 				</TouchableElement>
-				<Animated.View style={savingNoteIndicator}>
+				<Animated.View style={savingNoteIndicatorStyle}>
 					<Text>{this.state.noteSavingText}</Text>
 				</Animated.View>
+				<TouchableElement onPress={this.addInteraction}>
+					<Text>Add Interaction</Text>
+				</TouchableElement>
+				<Text>Number of interactions {friend.interactions.length}</Text>
 			</View>
 		);
 	}
@@ -69,30 +77,37 @@ class FriendPage extends Component {
 		this.state._noteSavingAnimatedOpacity.setValue(1);
 		this.setState({noteSavingText: "Saving note"});
 
-		var options = {
-			method: 'POST',
-			headers: {
-				'Accept': 'text/plain',
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				notes: this.state.note
-			})
-		};
+		var options = generatePost({notes: this.state.note});
 		var url = friendIdRequestUrl(this.props.friend.id);
 
 		fetch(url, options)
-				.then((responseBody) => responseBody.json())
-				.then((response) => {
-					this.setState({noteSavingText: "Saved!"});
-					Animated.timing(this.state._noteSavingAnimatedOpacity, {
-							toValue: 0
-						}).start();
-				})
-				.catch((error) => {
-					console.log(error);
-				})
-				.done();
+			.then((responseBody) => responseBody.json())
+			.then((response) => {
+				this.setState({noteSavingText: "Saved!"});
+				Animated.timing(this.state._noteSavingAnimatedOpacity, {
+						toValue: 0
+					}).start();
+			})
+			.catch((error) => {
+				console.log(error);
+			})
+			.done();
+	};
+
+	addInteraction = () => {
+		var options = generatePost({friendId: this.state.friend.id});
+		var url = INTERACTIONS_REQUEST_URL;
+
+		fetch(url, options)
+			.then((responseBody) => responseBody.json())
+			.then((response) => {
+				// TODO: emily do more here
+				console.log(response);
+			})
+			.catch((error) => {
+				console.log(error);
+			})
+			.done();
 	};
 }
 
