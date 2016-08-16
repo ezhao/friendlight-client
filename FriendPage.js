@@ -4,9 +4,9 @@ import {
 	StyleSheet,
 	Text,
 	View,
-	Slider,
 } from 'react-native';
 import FriendNoteEditor from './FriendNoteEditor';
+import FriendContactIntervalEditor from './FriendContactIntervalEditor';
 import {
 	friendIdRequestUrl,
 	generatePost,
@@ -44,23 +44,18 @@ class FriendPage extends Component {
 
 		return (
 			<View style={styles.container}>
-				<FriendNoteEditor note={friend.notes} friendId={friend.id} />
+				<FriendNoteEditor
+					note={friend.notes}
+					friendId={friend.id} />
 
 				<TouchableElement onPress={this.addInteraction}>
 					<Text>Add Interaction</Text>
 				</TouchableElement>
 				<Text>Number of interactions {friend.interactions.length}</Text>
 
-				<Slider
-					minimumValue={1}
-					maximumValue={365}
-					step={1}
-					value={friend.contactInterval}
-					onValueChange={(value) => this.setState({contactIntervalSliderValue: value})}
-					onSlidingComplete={(value) => this.saveContactInterval(value)}
-				/>
-				<Text>{this.state.contactIntervalSliderValue}</Text>
-				<Text>{this.state.contactInterval || friend.contactInterval}</Text>
+				<FriendContactIntervalEditor
+					contactInterval={friend.contactInterval}
+					friendId={friend.id} />
 			</View>
 		);
 	}
@@ -80,24 +75,6 @@ class FriendPage extends Component {
 			})
 			.done();
 	};
-
-	saveContactInterval = (value) => {
-		//TODO need to show saving/saved state
-
-		this.setState({contactInterval: value})
-		var options = generatePost({contactInterval: value});
-		var url = friendIdRequestUrl(this.props.friend.id);
-
-		fetch(url, options)
-			.then((responseBody) => responseBody.json())
-			.then((response) => {
-				//TODO
-			})
-			.catch((error) => {
-				console.log(error);
-			})
-			.done();
-	};
 }
 
 var styles = StyleSheet.create({
@@ -105,6 +82,9 @@ var styles = StyleSheet.create({
 		flex: 1,
 		paddingTop: 60,
 		backgroundColor: '#FFF',
+	},
+	row: {
+		flexDirection: 'row',
 	},
 });
 
