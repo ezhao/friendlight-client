@@ -6,6 +6,7 @@ import {
 	TextInput,
 	View,
 	Animated,
+	Slider,
 } from 'react-native';
 import {
 	friendIdRequestUrl,
@@ -69,6 +70,17 @@ class FriendPage extends Component {
 					<Text>Add Interaction</Text>
 				</TouchableElement>
 				<Text>Number of interactions {friend.interactions.length}</Text>
+
+				<Slider
+					minimumValue={1}
+					maximumValue={365}
+					step={1}
+					value={friend.contactInterval}
+					onValueChange={(value) => this.setState({contactIntervalSliderValue: value})}
+					onSlidingComplete={(value) => this.saveContactInterval(value)}
+				/>
+				<Text>{this.state.contactIntervalSliderValue}</Text>
+				<Text>{this.state.contactInterval || friend.contactInterval}</Text>
 			</View>
 		);
 	}
@@ -103,6 +115,24 @@ class FriendPage extends Component {
 			.then((response) => {
 				// TODO: emily do more here
 				console.log(response);
+			})
+			.catch((error) => {
+				console.log(error);
+			})
+			.done();
+	};
+
+	saveContactInterval = (value) => {
+		//TODO need to show saving/saved state
+
+		this.setState({contactInterval: value})
+		var options = generatePost({contactInterval: value});
+		var url = friendIdRequestUrl(this.props.friend.id);
+
+		fetch(url, options)
+			.then((responseBody) => responseBody.json())
+			.then((response) => {
+				//TODO
 			})
 			.catch((error) => {
 				console.log(error);
