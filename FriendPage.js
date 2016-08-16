@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {
-	TouchableHighlight,
+	TouchableOpacity,
 	StyleSheet,
 	Text,
 	TextInput,
@@ -47,7 +47,7 @@ class FriendPage extends Component {
 			// TODO: emily add loading state
 		}
 
-		var TouchableElement = TouchableHighlight;
+		var TouchableElement = TouchableOpacity;
 
 		var noteSavingText = this.getNoteSavingText();
 		var savingNoteIndicatorStyle = {color: this.getNoteSavingColor()};
@@ -62,10 +62,12 @@ class FriendPage extends Component {
 					value={this.state.note != null ? this.state.note : friend.notes}
 					placeholder={"Save a note about your friend"}
 				/>
-				<Animated.Text style={savingNoteIndicatorStyle}>{noteSavingText}</Animated.Text>
-				<TouchableElement onPress={this.saveNote}>
-					<Text>Save note</Text>
-				</TouchableElement>
+				<View style={styles.row}>
+					<Animated.Text style={[styles.saveIndicator, savingNoteIndicatorStyle]}>{noteSavingText}</Animated.Text>
+					<TouchableElement onPress={this.saveNote}>
+						<Text style={styles.saveButton}>Save note</Text>
+					</TouchableElement>
+				</View>
 				<TouchableElement onPress={this.addInteraction}>
 					<Text>Add Interaction</Text>
 				</TouchableElement>
@@ -183,6 +185,18 @@ var styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		paddingTop: 60
+	},
+	row: {
+		flexDirection: 'row',
+	},
+	saveIndicator: {
+		flex: 1,
+		padding: 8,
+	},
+	saveButton: {
+		padding: 8,
+		color: '#33AAFF',
+		fontWeight: 'bold',
 	},
 	note: {
 		height: 120,
