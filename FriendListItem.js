@@ -1,3 +1,4 @@
+import moment from 'moment';
 import React, {Component} from 'react';
 import {
 		StyleSheet,
@@ -28,6 +29,7 @@ class FriendListItem extends Component {
 
 	render() {
 		var friend = this.props.friend;
+		var nextInteraction = new moment(new Date(friend.nextInteraction));
 
 		var dynamicStyle = {
 			transform: [{translateX: this.state._animatedLeft}],
@@ -43,7 +45,10 @@ class FriendListItem extends Component {
 					<Animated.View
 							style={[styles.friendContainer, dynamicStyle]}
 							{...this._panResponder.panHandlers}>
-						<Text style={styles.name}>{friend.name}</Text>
+						<View>
+							<Text style={styles.name}>{friend.name}</Text>
+							<Text style={styles.name}>Next: {nextInteraction.format("h:mma MMMM Do, YYYY")}</Text>
+						</View>
 					</Animated.View>
 				</View>
 		)
