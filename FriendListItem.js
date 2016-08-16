@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 
 class FriendListItem extends Component {
-	static propTypes = { // todo emily not sure if this is doing anything at all
+	static propTypes = { //TODO emily not sure if this is doing anything at all
 		friend: React.PropTypes.object.isRequired,
 		onSelect: React.PropTypes.func.isRequired,
 		setParentScrollState: React.PropTypes.func,
