@@ -14,12 +14,15 @@ import {
 	INTERACTIONS_REQUEST_URL,
 } from './Constants';
 
+var SAVING_NOTE = "Saving note";
+var SAVING_NOTE_ERROR = "Error saving note";
 
 class FriendPage extends Component {
+
 	constructor(props) {
 		super(props);
 		this.state = {
-			_noteSavingAnimatedOpacity: new Animated.Value(0),
+			_noteSavingAnimated: new Animated.Value(0),
 		};
 	}
 
@@ -44,28 +47,25 @@ class FriendPage extends Component {
 			// TODO: emily add loading state
 		}
 
-		// TODO: this is jank for now
-		var savingNoteIndicatorStyle = {
-			opacity: this.state._noteSavingAnimatedOpacity,
-		}
-
 		var TouchableElement = TouchableHighlight;
+
+		var noteSavingText = this.getNoteSavingText();
+		var savingNoteIndicatorStyle = {color: this.getNoteSavingColor()};
+
 		return (
 			<View style={styles.container}>
 				<TextInput
 					style={styles.note}
 					onChangeText={(text) => this.setState({note: text})}
 					multiline={true}
-					editable = {true}
-					value={this.state.note || friend.notes}
+					editable = {!this.isSavingNote()}
+					value={this.state.note != null ? this.state.note : friend.notes}
 					placeholder={"Save a note about your friend"}
 				/>
+				<Animated.Text style={savingNoteIndicatorStyle}>{noteSavingText}</Animated.Text>
 				<TouchableElement onPress={this.saveNote}>
-					<Text>Save Note</Text>
+					<Text>Save note</Text>
 				</TouchableElement>
-				<Animated.View style={savingNoteIndicatorStyle}>
-					<Text>{this.state.noteSavingText}</Text>
-				</Animated.View>
 				<TouchableElement onPress={this.addInteraction}>
 					<Text>Add Interaction</Text>
 				</TouchableElement>
@@ -85,23 +85,61 @@ class FriendPage extends Component {
 		);
 	}
 
-	saveNote = () => {
-		this.state._noteSavingAnimatedOpacity.setValue(1);
-		this.setState({noteSavingText: "Saving note"});
+	getNoteSavingText = () => {
+		if (this.state.noteSavingText) {
+			return this.state.noteSavingText;
+		} else if (this.state.note != null && this.state.friend.notes != this.state.note) {
+			return "Unsaved changes";
+		} else {
+			return "";
+		}
+	};
 
-		var options = generatePost({notes: this.state.note});
+	getNoteSavingColor = () => {
+		if (this.isSavingNote()) {
+			return 'rgba(200, 100, 0, 1)';
+		} else if (this.isSavingNoteError()) {
+			return 'rgba(200, 0, 0, 1)'
+		} else if (this.state.noteSavingText) {
+			return this.state._noteSavingAnimated.interpolate({
+				inputRange: [0, 1],
+				outputRange: ['rgba(0, 200, 0, 0)', 'rgba(0, 200, 0, 1)']
+			});
+		} else if (this.state.note != null && this.state.friend.notes != this.state.note) {
+			return 'rgba(200, 200, 0, 1)';
+		} else {
+			return 'rgba(0, 0, 0, 1)';
+		}
+	};
+
+	isSavingNote = () => {
+		return this.state.noteSavingText == SAVING_NOTE;
+	};
+
+	isSavingNoteError = () => {
+		return this.state.noteSavingText == SAVING_NOTE_ERROR;
+	};
+
+	saveNote = () => {
+		this.state._noteSavingAnimated.setValue(1);
+		this.setState({noteSavingText: SAVING_NOTE});
+
+		var newNote = this.state.note;
+		var options = generatePost({notes: newNote});
 		var url = friendIdRequestUrl(this.props.friend.id);
 
 		fetch(url, options)
 			.then((responseBody) => responseBody.json())
 			.then((response) => {
+				this.state.friend.notes = newNote;
 				this.setState({noteSavingText: "Saved!"});
-				Animated.timing(this.state._noteSavingAnimatedOpacity, {
-						toValue: 0
-					}).start();
+				Animated.timing(this.state._noteSavingAnimated, {
+						toValue: 0,
+						duration: 2000,
+					}).start(() => this.setState({noteSavingText: null}));
 			})
 			.catch((error) => {
-				console.log(error);
+				this.setState({noteSavingText: SAVING_NOTE_ERROR});
 			})
 			.done();
 	};
