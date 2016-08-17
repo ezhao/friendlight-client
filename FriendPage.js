@@ -1,12 +1,11 @@
 import React, {Component} from 'react';
 import {
-	TouchableOpacity,
 	StyleSheet,
-	Text,
 	View,
 } from 'react-native';
 import FriendNoteEditor from './FriendNoteEditor';
 import FriendContactIntervalEditor from './FriendContactIntervalEditor';
+import FriendInteractionEditor from './FriendInteractionEditor';
 import {
 	friendIdRequestUrl,
 	generatePost,
@@ -34,47 +33,24 @@ class FriendPage extends Component {
 	render() {
 		var friend = this.state.friend;
 		if (!friend) {
-			return (
-				<View></View>
-			);
+			return (<View></View>);
 			// TODO: emily add loading state
 		}
-
-		var TouchableElement = TouchableOpacity;
 
 		return (
 			<View style={styles.container}>
 				<FriendNoteEditor
 					note={friend.notes}
 					friendId={friend.id} />
-
-				<TouchableElement onPress={this.addInteraction}>
-					<Text>Add Interaction</Text>
-				</TouchableElement>
-				<Text>Number of interactions {friend.interactions.length}</Text>
-
+				<FriendInteractionEditor
+					interactions={friend.interactions}
+					friendId={friend.id} />
 				<FriendContactIntervalEditor
 					contactInterval={friend.contactInterval}
 					friendId={friend.id} />
 			</View>
 		);
 	}
-
-	addInteraction = () => {
-		var options = generatePost({friendId: this.state.friend.id});
-		var url = INTERACTIONS_REQUEST_URL;
-
-		fetch(url, options)
-			.then((responseBody) => responseBody.json())
-			.then((response) => {
-				// TODO: emily do more here
-				console.log(response);
-			})
-			.catch((error) => {
-				console.log(error);
-			})
-			.done();
-	};
 }
 
 var styles = StyleSheet.create({
