@@ -17,7 +17,7 @@ var SAVING_NOTE_ERROR = "Error saving note";
 
 class FriendNoteEditor extends Component {
   static propTypes = {
-		note: React.PropTypes.string.isRequired,
+		note: React.PropTypes.string,
     friendId: React.PropTypes.number.isRequired,
 	};
 
