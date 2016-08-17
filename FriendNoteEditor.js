@@ -116,9 +116,10 @@ class FriendNoteEditor extends Component {
       }).start(() => this.setState({noteSavingText: null}));
   };
 
-  onSaveError = (error) => {
-    this.setState({noteSavingText: SAVING_NOTE_ERROR});
-  };
+	onSaveError = (error) => {
+		this.setState({noteSavingText: SAVING_NOTE_ERROR});
+		console.log(error);
+	};
 }
 
 var styles = StyleSheet.create({
