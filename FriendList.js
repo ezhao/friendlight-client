@@ -17,6 +17,10 @@ import {
 } from './Constants';
 
 class FriendList extends Component {
+	static navigationOptions = {
+    title: 'Friend List',
+  };
+
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -56,7 +60,7 @@ class FriendList extends Component {
 						dataSource={this.state.dataSource}
 						renderRow={this.renderFriend}
 						style={styles.friendListView}/>
-					<AddFriendButton onSelect={this.goToAddFriend} />
+					<AddFriendButton onSelect={this.goToAddFriend}/>
 				</ScrollView>
 		);
 	}
@@ -79,24 +83,22 @@ class FriendList extends Component {
 	};
 
 	selectFriend = (friend) => {
-		this.props.navigator.push({
+		this.props.navigation.navigate('FriendPage', {
 			name: friend.name,
-			index: FRIEND_PAGE_INDEX,
-			passProps: {friend: friend}
-		});
+			friend,
+		})
+	};
+
+	goToAddFriend = () => {
+		this.props.navigation.navigate('AddFriendPage', {
+			name: "Add Friend",
+			friendListCallback: this.updateList
+		})
 	};
 
 	setScrollState = (scrollState) => {
 		this._scrollView.setNativeProps({scrollEnabled: scrollState});
 		this._listView.setNativeProps({scrollEnabled: scrollState});
-	};
-
-	goToAddFriend = () => {
-		this.props.navigator.push({
-			name: "Add Friend",
-			index: ADD_FRIEND_INDEX,
-			passProps: {friendListCallback: this.updateList}
-		});
 	};
 
 	updateList = () => {
@@ -109,8 +111,8 @@ class AddFriendButton extends Component {
 		return (
 				<TouchableHighlight onPress={this.props.onSelect}>
 					<Image
-							source={{uri: "https://image.freepik.com/free-icon/plus-button_318-123906.jpg"}}
-							style={styles.plusImage}/>
+						source={{uri: "https://image.freepik.com/free-icon/plus-button_318-123906.jpg"}}
+						style={styles.plusImage}/>
 				</TouchableHighlight>
 		);
 	};

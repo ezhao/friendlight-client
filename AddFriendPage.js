@@ -9,12 +9,17 @@ import {
 		ListView,
 		View
 } from 'react-native';
+import { NavigationActions } from 'react-navigation'
 import {
 	REQUEST_URL,
 	FRIEND_LIST_INDEX
 } from './Constants';
 
 class AddFriendPage extends Component {
+	static navigationOptions = {
+    title: 'Add Friend',
+  };
+
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -55,10 +60,11 @@ class AddFriendPage extends Component {
 		fetch(REQUEST_URL, options)
 				.then((responseBody) => responseBody.json())
 				.then((response) => {
-					if (this.props.friendListCallback) {
-						this.props.friendListCallback();
+					const callback = this.props.navigation.state.params.friendListCallback;
+					if (callback) {
+						callback();
 					}
-					this.props.navigator.pop();
+					this.props.navigation.dispatch(NavigationActions.back());
 				})
 				.catch((error) => {
 					console.log(error);

@@ -6,11 +6,6 @@ export function friendIdRequestUrl(id) {
   return REQUEST_URL + "/" + id;
 };
 
-export const FRIEND_LIST_INDEX = 0;
-export const FRIEND_PAGE_INDEX = 1;
-export const ADD_FRIEND_INDEX = 2;
-
-
 export function generatePost(params) {
   return {
     method: 'POST',

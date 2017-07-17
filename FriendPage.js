@@ -13,6 +13,10 @@ import {
 } from './Constants';
 
 class FriendPage extends Component {
+	static navigationOptions = ({ navigation }) => ({
+		title: `${navigation.state.params.name}`,
+	});
+
 	constructor(props) {
 		super(props);
 		this.state = {};
@@ -23,7 +27,7 @@ class FriendPage extends Component {
 	}
 
 	fetchData() {
-		var url = friendIdRequestUrl(this.props.friend.id);
+		var url = friendIdRequestUrl(this.props.navigation.state.params.friend.id);
 		fetch(url)
 			.then((response) => response.json())
 			.then((responseData) => this.setState({friend: responseData}))
